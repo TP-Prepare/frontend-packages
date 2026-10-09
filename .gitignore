@@ -7,4 +7,4 @@ dist/
 .env
 .idea
 .DS_Store
-.vitepress/cache/
+**/.vitepress/cache/

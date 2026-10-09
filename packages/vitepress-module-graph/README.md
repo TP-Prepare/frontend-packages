@@ -220,7 +220,7 @@ bun run build && bun run typecheck && bun run test && bun run --filter '*' test:
 - `typecheck` — `tsc` (TypeScript 7) и `vue-tsc` для `.vue` (на TypeScript 6 из `@typescript/typescript6`: у
   TypeScript 7 нет JS API, на котором работает `vue-tsc`).
 - `test:site` — тестовый сайт `test/site` на копии фикстуры: пакет копируется в `test/site/node_modules`, как
-  после `npm install`, затем `tsc`, `vitepress build` и проверка страниц.
+  после `npm install`, затем `tsc`, `vitepress build` и проверка страниц, затем дымовая проверка `vitepress dev`.
 
 ## Первая публикация
 

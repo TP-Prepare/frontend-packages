@@ -44,6 +44,10 @@ test("useModuleGraph: данные из installModuleGraph", () => {
 	expect(app.runWithContext(() => useModuleGraph())).toBe(data);
 });
 
+test("ключ provide/inject общий для копий модуля (пред-сборка Vite в dev)", () => {
+	expect(MODULE_GRAPH_KEY).toBe(Symbol.for("module-graph"));
+});
+
 test("useModuleGraph без installModuleGraph — понятная ошибка", () => {
 	const app = createApp({});
 	expect(() => app.runWithContext(() => useModuleGraph())).toThrow(

@@ -42,7 +42,7 @@
   "scripts": {
     "typecheck": "tsc --noEmit && node scripts/vue-tsc.cjs --noEmit",
     "test": "bun test",
-    "test:site": "bun test/site/install.ts && tsc --noEmit -p test/site && vitepress build test/site && bun test/site/check.ts",
+    "test:site": "bun test/site/install.ts && tsc --noEmit -p test/site && vitepress build test/site && bun test/site/check.ts && bun test/site/dev-check.ts",
     "build": "tsdown"
   },
   "dependencies": {

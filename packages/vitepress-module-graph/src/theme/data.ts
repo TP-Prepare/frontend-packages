@@ -3,7 +3,9 @@
 import { type InjectionKey, inject } from "vue";
 import type { ModuleGraphData } from "../index.ts";
 
-export const MODULE_GRAPH_KEY: InjectionKey<ModuleGraphData> = Symbol("module-graph");
+// Symbol.for — общий для всех копий модуля: в dev Vite заранее собирает `…/theme` со своей копией этого
+// файла, а .vue импортируют его из dist; с обычным Symbol у provide и inject были бы разные ключи.
+export const MODULE_GRAPH_KEY: InjectionKey<ModuleGraphData> = Symbol.for("module-graph");
 
 /** Данные из installModuleGraph(app, data); без него — ошибка с подсказкой. */
 export function useModuleGraph(): ModuleGraphData {

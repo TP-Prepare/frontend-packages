@@ -9,3 +9,5 @@ rmSync(target, { recursive: true, force: true });
 mkdirSync(target, { recursive: true });
 cpSync(new URL("package.json", pkg), new URL("package.json", target));
 cpSync(new URL("dist/", pkg), new URL("dist/", target), { recursive: true });
+// Пред-сборка зависимостей dev-сервера — от прежней копии; у потребителя её сбрасывает смена lockfile.
+rmSync(new URL("./.vitepress/cache/", import.meta.url), { recursive: true, force: true });
