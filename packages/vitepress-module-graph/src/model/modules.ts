@@ -428,7 +428,8 @@ export function personLoad(module: Module, people: readonly Person[]): Load[] {
 /** Страница модуля, трека или подстраницы трека по `page.relativePath`; иначе `null`. */
 export function pageRef(relativePath: string, config: ModuleGraphConfig): { module: string; track?: string; page?: string } | null {
 	const dir = config.route.replace(/^\/|\/$/g, "");
-	const match = new RegExp(`^${escapeRe(dir)}/([^/]+)/(?:index\\.md|tracks/([^/]+?)(?:/([^/]+))?\\.md)$`).exec(relativePath);
+	const prefix = dir === "" ? "" : `${escapeRe(dir)}/`;
+	const match = new RegExp(`^${prefix}([^/]+)/(?:index\\.md|tracks/([^/]+?)(?:/([^/]+))?\\.md)$`).exec(relativePath);
 	if (!match?.[1]) return null;
 	if (!match[2]) return { module: match[1] };
 	return match[3] ? { module: match[1], track: match[2], page: match[3] } : { module: match[1], track: match[2] };

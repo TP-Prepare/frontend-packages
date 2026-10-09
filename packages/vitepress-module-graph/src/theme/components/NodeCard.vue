@@ -150,7 +150,7 @@ const view = computed(() => {
       <template v-if="view.tasks && view.progress">
         <h4>Задачи · {{ view.progress.done }} из {{ view.progress.total }} готово</h4>
         <TaskList v-if="view.tasks.length" :tasks="view.tasks" :people="people" />
-        <p v-else class="none">{{ noTasksNote(view.progress.total) }}</p>
+        <p v-else class="none">{{ noTasksNote(view.progress.total, config.board?.field ?? 'Трек') }}</p>
       </template>
       <a class="page" :href="withBase(view.t.url)">Открыть страницу трека</a>
     </template>

@@ -278,4 +278,7 @@ test("tasksWithSubtracks: parent sums subtracks, others only own", () => {
 test("noTasksNote: parent without own tasks points to subtracks", () => {
   expect(noTasksNote(3)).toBe("Своих задач нет — задачи в подтреках");
   expect(noTasksNote(0)).toBe("Задач пока нет: их привязывают на груминге полем «Трек» на доске");
+  expect(noTasksNote(0, "Трек")).toBe(noTasksNote(0));
+  expect(noTasksNote(0, "Track")).toBe("Задач пока нет: их привязывают на груминге полем «Track» на доске");
+  expect(noTasksNote(3, "Track")).toBe("Своих задач нет — задачи в подтреках");
 });

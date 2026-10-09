@@ -112,7 +112,7 @@ const urlOf = (id: string) => withBase(trackOf(id)?.url ?? found.value?.module.u
     <template v-if="tasks">
       <h2 id="задачи">Задачи<template v-if="progress && progress.total > 0"> · {{ progress.done }} из {{ progress.total }} готово</template></h2>
       <TaskList v-if="tasks.length" :tasks="tasks" :people="data.people" />
-      <p v-else>{{ noTasksNote(progress?.total ?? 0) }}</p>
+      <p v-else>{{ noTasksNote(progress?.total ?? 0, data.config.board?.field ?? 'Трек') }}</p>
     </template>
     <div v-if="!found.track.hasBody" class="info custom-block">
       <p class="custom-block-title">Описание ещё не написано</p>
