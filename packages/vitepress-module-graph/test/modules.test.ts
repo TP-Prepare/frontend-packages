@@ -378,3 +378,26 @@ describe("настройки: направления, стороны, сприн
     expect(filterToQuery({ people: [], areas: ["ml", "core"], hide: [] }, ml)).toBe("");
   });
 });
+
+describe("route: / (корень сайта)", () => {
+  const root: ModuleGraphConfig = { ...DEFAULT_CONFIG, route: "/" };
+  const rootCtx = { config: root, people: PEOPLE, prefix: "modules" };
+
+  test("pageRef: модуль, трек и подстраница без префикса", () => {
+    expect(pageRef("2/index.md", root)).toEqual({ module: "2" });
+    expect(pageRef("2/tracks/bff.md", root)).toEqual({ module: "2", track: "bff" });
+    expect(pageRef("2/tracks/bff/auth.md", root)).toEqual({ module: "2", track: "bff", page: "auth" });
+  });
+
+  test("pageRef: /modules/ и /course/modules/ работают как раньше", () => {
+    expect(pageRef("modules/2/index.md", { ...DEFAULT_CONFIG, route: "/modules/" })).toEqual({ module: "2" });
+    const c = { ...DEFAULT_CONFIG, route: "/course/modules/" };
+    expect(pageRef("course/modules/2/tracks/bff.md", c)).toEqual({ module: "2", track: "bff" });
+  });
+
+  test("url трека и модуля без двойного слэша", () => {
+    const t = parseTrack(FILE, "2", "bff", { title: "T", area: "front", do: { iRedTea: "front" } }, "", rootCtx);
+    expect(t.url).toBe("/2/tracks/bff");
+    expect(parseModule("2/index.md", "2", { title: "М" }, [t], rootCtx).url).toBe("/2/");
+  });
+});

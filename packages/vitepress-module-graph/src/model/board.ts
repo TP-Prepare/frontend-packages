@@ -165,8 +165,8 @@ export function tasksWithSubtracks(module: Module, byTrack: Readonly<Record<stri
 }
 
 /** Текст вместо пустого списка своих задач; `withSubtracks` — сколько задач вместе с подтреками. */
-export function noTasksNote(withSubtracks: number): string {
-	return withSubtracks > 0 ? "Своих задач нет — задачи в подтреках" : "Задач пока нет: их привязывают на груминге полем «Трек» на доске";
+export function noTasksNote(withSubtracks: number, field = "Трек"): string {
+	return withSubtracks > 0 ? "Своих задач нет — задачи в подтреках" : `Задач пока нет: их привязывают на груминге полем «${field}» на доске`;
 }
 
 export const STATUS_ORDER = ["In progress", "In review", "Ready", "Backlog", "Done"] as const;
