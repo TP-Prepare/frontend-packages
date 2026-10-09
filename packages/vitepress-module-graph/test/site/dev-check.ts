@@ -6,7 +6,7 @@ import { type ChildProcess, spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 const pkg = fileURLToPath(new URL("../../", import.meta.url));
-const KEY_RE = /Symbol(\.for)?\(\s*["']module-graph["']\s*\)/g;
+const KEY_RE = /Symbol(\.for)?\(\s*["']@tp-prepare\/vitepress-module-graph["']\s*\)/g;
 const IMPORT_RE = /(?:import|export)\s[^;]*?from\s*["']([^"']+)["']|import\s*["']([^"']+)["']/g;
 const OURS = /@tp-prepare[/_]vitepress-module-graph/;
 

@@ -31,6 +31,8 @@ function yamlError(file: string, error: unknown, text: string, offset: number): 
 }
 
 function parseYaml(text: string, file: string, offset: number): unknown {
+	// Пустой файл или одни комментарии: js-yaml 5 ругается «expected a document», а смысл один — «ничего не задано».
+	if (text.split(/\r?\n/).every((line) => /^\s*(#.*)?$/.test(line))) return null;
 	try {
 		return load(text);
 	} catch (error) {

@@ -3,7 +3,7 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "nod
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { personLoad } from "../src/index.ts";
+import { DEFAULT_CONFIG, personLoad } from "../src/index.ts";
 import { createModulesLoader, loadModuleDir, readBoard, readModules } from "../src/node/index.ts";
 import { PEOPLE } from "./fixtures/people.ts";
 
@@ -260,6 +260,19 @@ test("readBoard: wrong shape warns and gives null", () => {
   }
 });
 
+test("readBoard: unparseable takenAt warns and gives null", () => {
+  const modules = boardModules();
+  write("board.json", JSON.stringify({ ...SNAPSHOT, takenAt: "x" }));
+  const warn = spyOn(console, "warn").mockImplementation(() => {});
+  try {
+    expect(readBoard(join(dir, "board.json"), modules)).toBeNull();
+    expect(warn).toHaveBeenCalledTimes(1);
+    expect(String(warn.mock.calls[0]?.[0])).toBe("board.json: takenAt — нужна дата и время в формате ISO — задачи не показаны");
+  } finally {
+    warn.mockRestore();
+  }
+});
+
 test("readBoard: valid snapshot is split by module", () => {
   const modules = boardModules();
   write("board.json", JSON.stringify(SNAPSHOT));
@@ -309,4 +322,14 @@ test("createModulesLoader watches the module files and loads the directory", () 
   const loader = createModulesLoader(pathToFileURL(join(dir, "modules.data.ts")).href);
   expect(loader.watch).toEqual(expect.arrayContaining(["./people.yaml", "./module-graph.yaml", "./board.json", "./*/index.md", "./*/tracks/**/*.md"]));
   expect(loader.load().modules[0]?.id).toBe("10");
+});
+
+test.each([[""], ["\n"], ["# только комментарий\n"], ["  \n# a\n\n"]])("module-graph.yaml without content gives defaults: %j", (text) => {
+  write("module-graph.yaml", text);
+  expect(loadModuleDir(dir).config).toEqual(DEFAULT_CONFIG);
+});
+
+test.each([[""], ["# пусто\n"]])("empty people.yaml says a list is needed: %j", (text) => {
+  write("people.yaml", text);
+  expect(() => loadModuleDir(dir)).toThrow("modules/people.yaml: файл — нужен список людей");
 });

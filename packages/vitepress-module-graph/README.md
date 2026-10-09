@@ -14,7 +14,7 @@ npm install @tp-prepare/vitepress-module-graph
 |---|---|
 | `@tp-prepare/vitepress-module-graph` | модель: типы, настройки по умолчанию, разбор треков и людей, правила, связи графа, фильтры, разбор снимка доски |
 | `…/node` | `loadModuleDir`, `readModules`, `moduleSidebar`, `createModulesLoader` — для конфига и загрузчика VitePress |
-| `…/theme` | `installModuleGraph(app, data)`, `trackHeader`, `useModuleGraph()` и компоненты `.vue` |
+| `…/theme` | `installModuleGraph(app, data)` (регистрирует глобально компоненты `<ModuleGraph/>` и `<ModuleList/>`), `trackHeader` (шапка трека), `useModuleGraph()` |
 | `…/style.css` | цвета направлений по умолчанию (переменные `--mg-area-*`) |
 | `module-graph` | CLI: проверка папки модулей и доска GitHub |
 

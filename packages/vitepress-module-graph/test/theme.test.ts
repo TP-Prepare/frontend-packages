@@ -45,7 +45,7 @@ test("useModuleGraph: данные из installModuleGraph", () => {
 });
 
 test("ключ provide/inject общий для копий модуля (пред-сборка Vite в dev)", () => {
-	expect(MODULE_GRAPH_KEY).toBe(Symbol.for("module-graph"));
+	expect(MODULE_GRAPH_KEY).toBe(Symbol.for("@tp-prepare/vitepress-module-graph"));
 });
 
 test("useModuleGraph без installModuleGraph — понятная ошибка", () => {

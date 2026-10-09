@@ -17,7 +17,7 @@
         "module-graph": "dist/cli.mjs",
       },
       "dependencies": {
-        "force-graph": "1.51.4",
+        "force-graph": "^1.51.4",
         "gray-matter": "^4.0.3",
         "js-yaml": "^5.4.2",
       },

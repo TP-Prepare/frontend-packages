@@ -36,6 +36,16 @@ const snapshot = (over: Record<string, unknown> = {}) => ({
 });
 
 describe("parseSnapshot", () => {
+  test("an unparseable takenAt is a SnapshotError", () => {
+    expect(() => parseSnapshot(snapshot({ takenAt: "x" }))).toThrow("board.json: takenAt — нужна дата и время в формате ISO");
+  });
+
+  test("a sprint start that is not YYYY-MM-DD is a SnapshotError", () => {
+    expect(() => parseSnapshot(snapshot({ sprints: [{ title: "Sprint 5", start: "завтра", days: 14 }] }))).toThrow(
+      "board.json: sprints[0].start — нужна дата в формате ГГГГ-ММ-ДД",
+    );
+  });
+
   test("a valid snapshot is returned equal to the input", () => {
     const input: unknown = snapshot();
     expect<unknown>(parseSnapshot(input)).toEqual(input);

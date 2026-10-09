@@ -52,7 +52,9 @@ function obj(path: string, value: unknown): Record<string, unknown> {
 function parseSprint(path: string, value: unknown): BoardSprint {
 	const s = obj(path, value);
 	if (typeof s.days !== "number") throw new SnapshotError(`${path}.days — нужно число`);
-	return { title: str(`${path}.title`, s.title), start: str(`${path}.start`, s.start), days: s.days };
+	const start = str(`${path}.start`, s.start);
+	if (!/^\d{4}-\d{2}-\d{2}$/.test(start) || Number.isNaN(Date.parse(start))) throw new SnapshotError(`${path}.start — нужна дата в формате ГГГГ-ММ-ДД`);
+	return { title: str(`${path}.title`, s.title), start, days: s.days };
 }
 
 function parseTask(path: string, value: unknown): BoardTask {
@@ -76,6 +78,7 @@ export function parseSnapshot(json: unknown): BoardSnapshot {
 	if (!isRecord(json)) throw new SnapshotError("нужен объект");
 	const root = json;
 	const takenAt = str("takenAt", root.takenAt);
+	if (Number.isNaN(Date.parse(takenAt))) throw new SnapshotError("takenAt — нужна дата и время в формате ISO");
 	const sprints = arr("sprints", root.sprints).map((s, i) => parseSprint(`sprints[${i}]`, s));
 	const tasks = arr("tasks", root.tasks).map((t, i) => parseTask(`tasks[${i}]`, t));
 	return { takenAt, sprints, tasks };

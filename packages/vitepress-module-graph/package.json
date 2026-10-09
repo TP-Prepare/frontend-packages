@@ -29,7 +29,8 @@
       "types": "./dist/theme/index.d.mts",
       "import": "./dist/theme/index.mjs"
     },
-    "./style.css": "./dist/theme/style.css"
+    "./style.css": "./dist/theme/style.css",
+    "./package.json": "./package.json"
   },
   "files": ["dist"],
   "publishConfig": {
@@ -43,10 +44,11 @@
     "typecheck": "tsc --noEmit && node scripts/vue-tsc.cjs --noEmit",
     "test": "bun test",
     "test:site": "bun test/site/install.ts && tsc --noEmit -p test/site && vitepress build test/site && bun test/site/check.ts && bun test/site/dev-check.ts",
-    "build": "tsdown"
+    "build": "tsdown",
+    "prepublishOnly": "tsdown"
   },
   "dependencies": {
-    "force-graph": "1.51.4",
+    "force-graph": "^1.51.4",
     "gray-matter": "^4.0.3",
     "js-yaml": "^5.4.2"
   },
