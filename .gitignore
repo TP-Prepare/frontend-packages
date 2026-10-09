@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.claude/worktrees/
+.superpowers/
+*.tgz
+*.tsbuildinfo
+.env
+.idea
+.DS_Store
