@@ -3,3 +3,4 @@ export * from "./model/errors.ts";
 export * from "./model/people.ts";
 export * from "./model/board.ts";
 export * from "./model/modules.ts";
+export * from "./model/data.ts";
