@@ -40,13 +40,20 @@
     "vue": "^3.5"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && node scripts/vue-tsc.cjs --noEmit",
     "test": "bun test",
-    "test:site": "true",
+    "test:site": "bun test/site/install.ts && tsc --noEmit -p test/site && vitepress build test/site && bun test/site/check.ts",
     "build": "tsdown"
   },
   "dependencies": {
+    "force-graph": "1.51.4",
     "gray-matter": "^4.0.3",
     "js-yaml": "^5.4.2"
+  },
+  "devDependencies": {
+    "@typescript/typescript6": "6.0.2",
+    "vitepress": "1.6.4",
+    "vue": "3.5.43",
+    "vue-tsc": "3.3.11"
   }
 }
