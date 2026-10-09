@@ -1,0 +1,64 @@
+{
+  "items": [
+    {
+      "content": {
+        "__typename": "Issue",
+        "number": 12,
+        "title": "Форма входа",
+        "url": "https://github.com/Cringe-Driven-Development-Team/frontend/issues/12",
+        "state": "OPEN",
+        "stateReason": null,
+        "repository": { "name": "frontend", "owner": { "login": "Cringe-Driven-Development-Team" } },
+        "assignees": { "nodes": [{ "login": "alice" }] },
+        "parent": null
+      },
+      "status": { "name": "In progress" },
+      "sprint": { "title": "Sprint 3" },
+      "track": { "name": "bff" }
+    },
+    {
+      "content": {
+        "__typename": "Issue",
+        "number": 15,
+        "title": "Подзадача без трека",
+        "url": "https://github.com/Cringe-Driven-Development-Team/backend/issues/15",
+        "state": "OPEN",
+        "stateReason": null,
+        "repository": { "name": "backend", "owner": { "login": "Cringe-Driven-Development-Team" } },
+        "assignees": { "nodes": [] },
+        "parent": { "number": 9, "repository": { "name": "frontend", "owner": { "login": "Cringe-Driven-Development-Team" } } }
+      },
+      "status": null,
+      "sprint": null,
+      "track": null
+    },
+    {
+      "content": {
+        "__typename": "Issue",
+        "number": 20,
+        "title": "Отказались",
+        "url": "https://github.com/Cringe-Driven-Development-Team/frontend/issues/20",
+        "state": "CLOSED",
+        "stateReason": "NOT_PLANNED",
+        "repository": { "name": "frontend", "owner": { "login": "Cringe-Driven-Development-Team" } },
+        "assignees": { "nodes": [{ "login": "bob" }, { "login": "carol" }] },
+        "parent": null
+      },
+      "status": { "name": "Done" },
+      "sprint": { "title": "Sprint 2" },
+      "track": null
+    },
+    {
+      "content": { "__typename": "DraftIssue" },
+      "status": { "name": "Backlog" },
+      "sprint": null,
+      "track": null
+    }
+  ],
+  "iterations": {
+    "configuration": {
+      "iterations": [{ "title": "Sprint 3", "startDate": "2026-10-05", "duration": 14 }],
+      "completedIterations": [{ "title": "Sprint 2", "startDate": "2026-09-21", "duration": 14 }]
+    }
+  }
+}

@@ -1,0 +1,26 @@
+- login: YarikMix
+  name: Ярослав
+  role: ментор фронта
+  area: front
+  mentor: true
+- login: blackHATred
+  name: Саша
+  role: ментор бэка
+  area: back
+  mentor: true
+- login: ManInTheCoat
+  name: Ерофей
+  role: фронт
+  area: front
+- login: iRedTea
+  name: Денис
+  role: devops
+  area: devops
+- login: GrayMouse9
+  name: Даша
+  role: бэк
+  area: back
+- login: MrDuckVC
+  name: Валентин
+  role: бэк
+  area: back

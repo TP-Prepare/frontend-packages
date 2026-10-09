@@ -1,0 +1,61 @@
+{
+  "name": "@tp-prepare/vitepress-module-graph",
+  "version": "0.1.0",
+  "description": "Плагин VitePress: граф модулей и треков, CLI module-graph",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TP-Prepare/frontend-packages.git",
+    "directory": "packages/vitepress-module-graph"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "sideEffects": ["*.css", "*.vue"],
+  "bin": {
+    "module-graph": "dist/cli.mjs"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    },
+    "./node": {
+      "types": "./dist/node/index.d.mts",
+      "import": "./dist/node/index.mjs"
+    },
+    "./theme": {
+      "types": "./dist/theme/index.d.mts",
+      "import": "./dist/theme/index.mjs"
+    },
+    "./style.css": "./dist/theme/style.css",
+    "./package.json": "./package.json"
+  },
+  "files": ["dist"],
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "vitepress": "^1.6",
+    "vue": "^3.5"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit && node scripts/vue-tsc.cjs --noEmit",
+    "test": "bun test",
+    "test:site": "bun test/site/install.ts && tsc --noEmit -p test/site && vitepress build test/site && bun test/site/check.ts && bun test/site/dev-check.ts",
+    "build": "tsdown",
+    "prepublishOnly": "tsdown"
+  },
+  "dependencies": {
+    "force-graph": "^1.51.4",
+    "gray-matter": "^4.0.3",
+    "js-yaml": "^5.4.2"
+  },
+  "devDependencies": {
+    "@typescript/typescript6": "6.0.2",
+    "vitepress": "1.6.4",
+    "vue": "3.5.43",
+    "vue-tsc": "3.3.11"
+  }
+}
