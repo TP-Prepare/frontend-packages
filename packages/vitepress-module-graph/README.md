@@ -1,7 +1,7 @@
 # @tp-prepare/vitepress-module-graph
 
 [![npm](https://img.shields.io/npm/v/@tp-prepare/vitepress-module-graph?logo=npm)](https://www.npmjs.com/package/@tp-prepare/vitepress-module-graph)
-[![CI](https://github.com/TP-Prepare/frontend-packages/actions/workflows/ci.yml/badge.svg)](https://github.com/TP-Prepare/frontend-packages/actions/workflows/ci.yml)
+[![CI](https://github.com/TP-Prepare/frontend-packages/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/TP-Prepare/frontend-packages/actions/workflows/ci.yml)
 [![Playground](https://img.shields.io/badge/playground-модуль_№2-5C73E7?logo=vitepress&logoColor=white)](https://cringe-driven-development-team.github.io/docs/modules/2/)
 
 Граф учебного модуля «люди — треки — подзадачи» для сайта на VitePress: страница модуля с графом и фильтрами,
