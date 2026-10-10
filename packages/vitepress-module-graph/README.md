@@ -4,6 +4,14 @@
 шапка на странице каждого трека, архив модулей, меню раздела и прогресс треков по задачам доски GitHub Projects.
 Данные — папка с файлами Markdown и YAML; ошибка в данных роняет сборку и называет файл и поле.
 
+<picture>
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/TP-Prepare/frontend-packages/main/packages/vitepress-module-graph/docs/screenshot-light.png">
+  <img src="https://raw.githubusercontent.com/TP-Prepare/frontend-packages/main/packages/vitepress-module-graph/docs/screenshot-dark.png" alt="Страница модуля: слева люди с нагрузкой и направления треков, справа граф «люди — треки — подзадачи»">
+</picture>
+
+Так это выглядит на сайте команды Cringe Driven Development:
+[модуль №2](https://cringe-driven-development-team.github.io/docs/modules/2/).
+
 Нужны VitePress 1.6+ и Vue 3.5+, CLI работает под Node 22+ и bun.
 
 ```sh
