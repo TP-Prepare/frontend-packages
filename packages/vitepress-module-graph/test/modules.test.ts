@@ -269,6 +269,7 @@ describe("moduleSidebar", () => {
     expect(moduleSidebar([m])).toEqual([
       {
         text: "Октябрь",
+        collapsed: false,
         items: [
           { text: "Граф", link: "/modules/2/" },
           {
@@ -284,6 +285,17 @@ describe("moduleSidebar", () => {
         ],
       },
     ]);
+  });
+  test("modules go in ascending order and each one collapses", () => {
+    // readModules отдаёт свежий модуль первым (архив); в меню модули идут по порядку: №2, затем №3
+    const m3 = parseModule("modules/3/index.md", "3", { title: "Модуль №3" }, [], CTX);
+    const m2 = parseModule("modules/2/index.md", "2", { title: "Модуль №2" }, [], CTX);
+    const modules = [m3, m2];
+    expect(moduleSidebar(modules).map((s) => [s.text, s.collapsed])).toEqual([
+      ["Модуль №2", false],
+      ["Модуль №3", false],
+    ]);
+    expect(modules.map((m) => m.id)).toEqual(["3", "2"]);
   });
   test("subtrack is nested under its parent after the parent's subpages", () => {
     const sub = (track: string, id: string, title: string): TrackPage => ({ id, title, url: `/modules/2/tracks/${track}/${id}` });

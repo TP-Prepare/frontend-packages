@@ -458,11 +458,16 @@ export function doersOf(module: Module, track: Track): Doer[] {
 	return result;
 }
 
-/** Меню раздела «Модули»: по модулю — граф и треки; в пункте трека — подстраницы, затем подтреки. */
+/**
+ * Меню раздела «Модули»: модули по возрастанию номера, каждый сворачивается; в модуле — граф и треки;
+ * в пункте трека — подстраницы, затем подтреки.
+ */
 export function moduleSidebar(modules: readonly Module[]): SidebarItem[] {
 	const item = (m: Module, t: Track): SidebarItem => {
 		const items = [...t.pages.map((p): SidebarItem => ({ text: p.title, link: p.url })), ...subtracksOf(m, t.id).map((s) => item(m, s))];
 		return items.length > 0 ? { text: t.title, link: t.url, collapsed: false, items } : { text: t.title, link: t.url };
 	};
-	return modules.map((m) => ({ text: m.title, items: [{ text: "Граф", link: m.url }, ...topTracks(m).map((t) => item(m, t))] }));
+	return [...modules]
+		.sort((a, b) => Number(a.id) - Number(b.id))
+		.map((m) => ({ text: m.title, collapsed: false, items: [{ text: "Граф", link: m.url }, ...topTracks(m).map((t) => item(m, t))] }));
 }

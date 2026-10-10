@@ -43,7 +43,7 @@ export default createModulesLoader(import.meta.url);
 ```ts
 // site/.vitepress/config.mts
 import { moduleSidebar, readModules } from '@tp-prepare/vitepress-module-graph/node';
-// themeConfig.sidebar:
+// themeConfig.sidebar — модули по возрастанию номера, каждый сворачивается стрелкой:
 '/modules/': moduleSidebar(readModules('site/modules')),
 // пакет отдаёт .vue как есть — Vite сайта должен собрать его и для SSR:
 vite: { ssr: { noExternal: ['@tp-prepare/vitepress-module-graph'] } },
