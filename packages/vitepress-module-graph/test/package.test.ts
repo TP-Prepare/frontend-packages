@@ -16,6 +16,10 @@ test("манифест пакета", async () => {
 	expect(pkg.files).toEqual(["dist"]);
 	expect(pkg.publishConfig.access).toBe("public");
 	expect(pkg.peerDependencies).toEqual({ vitepress: "^1.6", vue: "^3.5" });
+	// без homepage npm ведёт ссылку Homepage в корень монорепы, а не на README пакета
+	expect(pkg.homepage).toBe(
+		"https://github.com/TP-Prepare/frontend-packages/tree/main/packages/vitepress-module-graph#readme",
+	);
 });
 
 test("release-please", async () => {

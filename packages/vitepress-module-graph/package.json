@@ -8,6 +8,7 @@
     "url": "git+https://github.com/TP-Prepare/frontend-packages.git",
     "directory": "packages/vitepress-module-graph"
   },
+  "homepage": "https://github.com/TP-Prepare/frontend-packages/tree/main/packages/vitepress-module-graph#readme",
   "type": "module",
   "engines": {
     "node": ">=22"
