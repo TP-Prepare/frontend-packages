@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.2](https://github.com/TP-Prepare/frontend-packages/compare/vitepress-module-graph-v0.1.1...vitepress-module-graph-v0.1.2) (2026-10-10)
+
+
+### Bug Fixes
+
+* **vitepress-module-graph:** Homepage на npm ведёт на README пакета ([145b4e7](https://github.com/TP-Prepare/frontend-packages/commit/145b4e700d93139bb6f9785db936ea8eae952214))
+* **vitepress-module-graph:** Homepage на npm ведёт на README пакета ([12113f4](https://github.com/TP-Prepare/frontend-packages/commit/12113f468436d014f1056dbf1850375cc81d2fd2))
+
 ## [0.1.1](https://github.com/TP-Prepare/frontend-packages/compare/vitepress-module-graph-v0.1.0...vitepress-module-graph-v0.1.1) (2026-10-10)
 
 
