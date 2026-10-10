@@ -1,6 +1,6 @@
 {
   "name": "@tp-prepare/vitepress-module-graph",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Плагин VitePress: граф модулей и треков, CLI module-graph",
   "license": "MIT",
   "repository": {
@@ -12,7 +12,10 @@
   "engines": {
     "node": ">=22"
   },
-  "sideEffects": ["*.css", "*.vue"],
+  "sideEffects": [
+    "*.css",
+    "*.vue"
+  ],
   "bin": {
     "module-graph": "dist/cli.mjs"
   },
@@ -32,7 +35,9 @@
     "./style.css": "./dist/theme/style.css",
     "./package.json": "./package.json"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "publishConfig": {
     "access": "public"
   },
