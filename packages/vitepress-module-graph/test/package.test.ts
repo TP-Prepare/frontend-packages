@@ -6,7 +6,8 @@ const read = async (rel: string) =>
 test("манифест пакета", async () => {
 	const pkg = await read("../package.json");
 	expect(pkg.name).toBe("@tp-prepare/vitepress-module-graph");
-	expect(pkg.version).toBe("0.1.0");
+	// версию двигает release-please — проверяем форму, а не число
+	expect(pkg.version).toMatch(/^\d+\.\d+\.\d+$/);
 	expect(pkg.engines.node).toBe(">=22");
 	expect(pkg.bin["module-graph"]).toBe("dist/cli.mjs");
 	for (const key of [".", "./node", "./theme", "./style.css"]) {
@@ -23,5 +24,6 @@ test("release-please", async () => {
 	expect(entry.component).toBe("vitepress-module-graph");
 	expect(cfg.plugins.map((p: any) => p.type)).toContain("node-workspace");
 	const manifest = await read("../../../.release-please-manifest.json");
-	expect(manifest["packages/vitepress-module-graph"]).toBe("0.1.0");
+	const pkg = await read("../package.json");
+	expect(manifest["packages/vitepress-module-graph"]).toBe(pkg.version);
 });
