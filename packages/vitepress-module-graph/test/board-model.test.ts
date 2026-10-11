@@ -5,6 +5,7 @@ import {
   moscowDate,
   parseSnapshot,
   sortTasks,
+  subtaskIssues,
   statusRank,
   noTasksNote,
   tasksWithSubtracks,
@@ -248,7 +249,7 @@ describe("moscowDate", () => {
 });
 
 describe("moduleTasks", () => {
-  const board: BoardData = { takenAt: "2026-10-08T09:00:00Z", byModule: assignTasks(modules, mkSnap([])) };
+  const board: BoardData = { takenAt: "2026-10-08T09:00:00Z", byModule: assignTasks(modules, mkSnap([])), byRef: {} };
   const [withSprints] = modules;
   const noSprints: Module = { ...(withSprints as Module), id: "2026-09", sprints: [] };
 
@@ -281,4 +282,36 @@ test("noTasksNote: parent without own tasks points to subtracks", () => {
   expect(noTasksNote(0, "Трек")).toBe(noTasksNote(0));
   expect(noTasksNote(0, "Track")).toBe("Задач пока нет: их привязывают на груминге полем «Track» на доске");
   expect(noTasksNote(3, "Track")).toBe("Своих задач нет — задачи в подтреках");
+});
+
+describe("subtaskIssues", () => {
+  const found: BoardTask = { ref: "figma#5", title: "Экран профиля", url: "https://github.com/o/figma/issues/5", state: "open", status: "Ready", sprint: null, assignees: [], track: null, parent: null };
+
+  test("found, missing, foreign, order", () => {
+    expect(subtaskIssues(["figma#9", "figma#5", "TP-Prepare/x#2"], { "figma#5": found }, "Cringe-Driven-Development-Team")).toEqual([
+      { ref: "figma#9", task: null, url: "https://github.com/Cringe-Driven-Development-Team/figma/issues/9" },
+      { ref: "figma#5", task: found, url: found.url },
+      { ref: "TP-Prepare/x#2", task: null, url: "https://github.com/TP-Prepare/x/issues/2" },
+    ]);
+    expect(subtaskIssues(["figma#9"], {}, null)).toEqual([{ ref: "figma#9", task: null, url: null }]);
+  });
+
+  test("owner prefix of the board and case differences still find the task", () => {
+    const foreign: BoardTask = { ...found, ref: "TP-Prepare/x#2", url: "https://github.com/TP-Prepare/x/issues/2" };
+    const refs = ["Cringe-Driven-Development-Team/figma#5", "Figma#5", "tp-prepare/X#2"] as const;
+    expect(subtaskIssues(refs, { "figma#5": found, "TP-Prepare/x#2": foreign }, "Cringe-Driven-Development-Team")).toEqual([
+      { ref: refs[0], task: found, url: found.url },
+      { ref: refs[1], task: found, url: found.url },
+      { ref: refs[2], task: foreign, url: foreign.url },
+    ]);
+  });
+
+  test("subtask progress skips not_planned", () => {
+    const byRef: Record<string, BoardTask> = {
+      "figma#5": { ...found, state: "closed" },
+      "figma#6": { ...found, ref: "figma#6", state: "not_planned" },
+    };
+    const tasks = subtaskIssues(["figma#5", "figma#6"], byRef, "o").flatMap((i) => (i.task ? [i.task] : []));
+    expect(trackProgress(tasks)).toMatchObject({ total: 1, done: 1 });
+  });
 });

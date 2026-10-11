@@ -161,7 +161,7 @@ test("real site/modules is valid", () => {
   expect(track("service-harness")?.label).toBe("Harness сервиса");
   expect(track("front-harness")?.partOf).toBe("service-harness");
   expect(track("front-harness")?.related).toEqual([]);
-  expect(track("service-harness")?.subtasks).toEqual([{ title: "Скиллы", subtasks: ["/apidog"] }]);
+  expect(track("service-harness")?.subtasks).toEqual([{ title: "Скиллы", issues: [], subtasks: [{ title: "/apidog", issues: [] }] }]);
   const redis = track("redis-sessions");
   expect([redis?.area, redis?.do, redis?.mentors, redis?.related.map((r) => r.track), redis?.subtasks.length]).toEqual([
     "back",
@@ -279,6 +279,18 @@ test("readBoard: valid snapshot is split by module", () => {
   const board = readBoard(join(dir, "board.json"), modules);
   expect(board?.takenAt).toBe(SNAPSHOT.takenAt);
   expect(board?.byModule["2"]?.byTrack.bff?.map((x) => x.ref)).toEqual(["frontend#1"]);
+});
+
+test("readBoard: byRef has every task of the snapshot", () => {
+  const modules = boardModules();
+  const extra = { ref: "figma#5", title: "Экран профиля", url: "https://x/5", state: "open", status: "Ready", sprint: null, assignees: [], track: null, parent: null };
+  write("board.json", JSON.stringify({ ...SNAPSHOT, tasks: [...SNAPSHOT.tasks, extra] }));
+  const board = readBoard(join(dir, "board.json"), modules);
+  expect(board?.byRef["figma#5"]?.title).toBe("Экран профиля");
+  expect(Object.keys(board?.byRef ?? {}).sort()).toEqual(["figma#5", "frontend#1"]);
+  const m = board?.byModule["2"];
+  const all = [...Object.values(m?.byTrack ?? {}).flat(), ...(m?.untracked ?? []), ...(m?.unknown ?? [])];
+  expect(all.map((x) => x.ref)).not.toContain("figma#5");
 });
 
 test("real october module has four sprints", () => {

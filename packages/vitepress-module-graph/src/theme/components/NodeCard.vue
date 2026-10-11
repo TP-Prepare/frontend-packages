@@ -5,12 +5,14 @@ import { withBase } from 'vitepress';
 import {
   areaLabel,
   doersOf,
+  type BoardTask,
   type Module,
   type ModuleTasks,
   noTasksNote,
   type Person,
   sideLabel,
   subtaskByNodeId,
+  subtaskIssues,
   subtracksOf,
   type Track,
   tasksWithSubtracks,
@@ -19,8 +21,15 @@ import {
 import { useModuleGraph } from '../data';
 import TaskList from './TaskList.vue';
 
-// tasks: null — снимка доски нет, блоков задач в карточке нет.
-const props = defineProps<{ id: string; module: Module; people: readonly Person[]; tasks: ModuleTasks | null }>();
+// tasks: null — снимка доски нет, блоков задач в карточке нет. byRef — все задачи снимка по номеру,
+// для задач подзадачи; null — снимка нет или у модуля нет sprints.
+const props = defineProps<{
+  id: string;
+  module: Module;
+  people: readonly Person[];
+  tasks: ModuleTasks | null;
+  byRef: Readonly<Record<string, BoardTask>> | null;
+}>();
 const emit = defineEmits<{ select: [id: string]; close: [] }>();
 
 const { config } = useModuleGraph();
@@ -63,7 +72,11 @@ const view = computed(() => {
   }
   const found = subtaskByNodeId(props.module, props.id);
   if (!found) return null;
-  return { kind: 'subtask' as const, t: found.track, title: found.title, children: found.children, parent: found.parent };
+  const issues = props.byRef && found.issues.length ? subtaskIssues(found.issues, props.byRef, config.board?.owner ?? null) : null;
+  const tasks = issues?.flatMap((i) => (i.task ? [i.task] : [])) ?? [];
+  const missing = issues?.filter((i) => !i.task) ?? [];
+  const progress = issues ? trackProgress(tasks) : null;
+  return { kind: 'subtask' as const, t: found.track, title: found.title, children: found.children, parent: found.parent, issues, tasks, missing, progress };
 });
 </script>
 
@@ -135,8 +148,8 @@ const view = computed(() => {
           <li>
             <button type="button" class="go" @click="emit('select', `subtask:${view.t.id}/${i}`)">{{ s.title }}</button>
           </li>
-          <li v-for="(title, j) in s.subtasks" :key="`${i}/${j}`" class="nested">
-            <button type="button" class="go" @click="emit('select', `subtask:${view.t.id}/${i}/${j}`)">{{ title }}</button>
+          <li v-for="(nested, j) in s.subtasks" :key="`${i}/${j}`" class="nested">
+            <button type="button" class="go" @click="emit('select', `subtask:${view.t.id}/${i}/${j}`)">{{ nested.title }}</button>
           </li>
         </template>
       </ul>
@@ -185,6 +198,15 @@ const view = computed(() => {
           <span class="side">{{ sideOf(view.t, login) }}</span>
         </li>
       </ul>
+      <template v-if="view.issues && view.progress">
+        <h4>Задачи · {{ view.progress.done }} из {{ view.progress.total }} готово</h4>
+        <TaskList v-if="view.tasks.length" :tasks="view.tasks" :people="people" />
+        <p v-for="m in view.missing" :key="m.ref" class="none">
+          <a v-if="m.url" :href="m.url" target="_blank" rel="noopener">{{ m.ref }}</a>
+          <template v-else>{{ m.ref }}</template>
+          — нет на доске
+        </p>
+      </template>
     </template>
   </section>
 </template>

@@ -86,8 +86,8 @@ export function parseSnapshot(json: unknown): BoardSnapshot {
 
 export type Progress = { done: number; active: number; total: number };
 export type ModuleTasks = { byTrack: Record<string, BoardTask[]>; untracked: BoardTask[]; unknown: BoardTask[] };
-/** Снимок доски в данных сайта: время съёмки и задачи по модулям. */
-export type BoardData = { takenAt: string; byModule: Record<string, ModuleTasks> };
+/** Снимок доски в данных сайта: время съёмки, задачи по модулям и все задачи снимка по номеру. */
+export type BoardData = { takenAt: string; byModule: Record<string, ModuleTasks>; byRef: Record<string, BoardTask> };
 
 /**
  * Задачи модуля для показа; `null` — задач не показываем: снимка нет или у модуля нет `sprints`
@@ -157,6 +157,32 @@ export function trackProgress(tasks: readonly BoardTask[]): Progress {
 		done: counted.filter((t) => t.status === "Done" || t.state === "closed").length,
 		active: counted.filter((t) => t.status === "In progress" || t.status === "In review").length,
 	};
+}
+
+export type SubtaskIssue = { ref: string; task: BoardTask | null; url: string | null };
+
+const ISSUE_REF = /^(?:([^/]+)\/)?([^#]+)#(\d+)$/;
+
+/**
+ * Задачи подзадачи в порядке `issues`: задача из снимка — со ссылкой `task.url`; нет в снимке — ссылка по номеру
+ * (владелец из номера, иначе `owner`); без владельца вовсе — `url: null`, номер рисуется текстом.
+ */
+export function subtaskIssues(
+	issues: readonly string[],
+	byRef: Readonly<Record<string, BoardTask>>,
+	owner: string | null,
+): SubtaskIssue[] {
+	const lower = new Map(Object.entries(byRef).map(([k, t]) => [k.toLowerCase(), t]));
+	const ownerLc = owner?.toLowerCase();
+	return issues.map((ref) => {
+		// снимок пишет репозитории владельца доски без префикса; имена на GitHub регистронезависимы
+		const key = ownerLc && ref.toLowerCase().startsWith(`${ownerLc}/`) ? ref.slice(ownerLc.length + 1) : ref;
+		const task = lower.get(key.toLowerCase()) ?? null;
+		if (task) return { ref, task, url: task.url };
+		const m = ISSUE_REF.exec(ref);
+		const issueOwner = m?.[1] ?? owner;
+		return { ref, task: null, url: m && issueOwner ? `https://github.com/${issueOwner}/${m[2]}/issues/${m[3]}` : null };
+	});
 }
 
 /** Задачи трека и его подтреков (спека 2026-10-09-subtracks §6); у подтрека и обычного трека — только свои. */

@@ -1,0 +1,8 @@
+{
+  "takenAt": "2026-10-11T09:00:00Z",
+  "sprints": [{ "title": "Sprint 5", "start": "2026-10-05", "days": 14 }],
+  "tasks": [
+    { "ref": "figma#5", "title": "Экран профиля", "url": "https://github.com/tp-prepare/figma/issues/5", "state": "open", "status": "Ready", "sprint": "Sprint 5", "assignees": ["ManInTheCoat"], "track": "figma", "parent": null },
+    { "ref": "figma#6", "title": "Экран блокнота", "url": "https://github.com/tp-prepare/figma/issues/6", "state": "open", "status": "Backlog", "sprint": null, "assignees": [], "track": null, "parent": null }
+  ]
+}

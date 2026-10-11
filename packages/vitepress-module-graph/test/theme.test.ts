@@ -54,3 +54,10 @@ test("useModuleGraph без installModuleGraph — понятная ошибка
 		"module-graph: вызовите installModuleGraph(app, data) в enhanceApp",
 	);
 });
+
+test("ModuleGraph: no fit button, canvas is not exposed", () => {
+	const src = (name: string) => readFileSync(fileURLToPath(new URL(`../src/theme/components/${name}.vue`, import.meta.url)), "utf8");
+	expect(src("ModuleGraph")).not.toContain("Вписать");
+	expect(src("ModuleGraph")).not.toContain(".hud button");
+	expect(src("GraphCanvas")).not.toContain("defineExpose");
+});

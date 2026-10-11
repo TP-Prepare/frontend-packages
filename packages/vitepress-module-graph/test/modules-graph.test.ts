@@ -130,6 +130,7 @@ test("neighbours: person gets nested subtasks, parent gets subtrack", () => {
 test("subtaskByNodeId", () => {
   expect(subtaskByNodeId(NESTED, "subtask:service/0")).toMatchObject({ title: "Скиллы", children: ["/apidog"], parent: null });
   expect(subtaskByNodeId(NESTED, "subtask:service/0/0")).toMatchObject({ title: "/apidog", children: [], parent: { index: 0, title: "Скиллы" } });
+  expect(subtaskByNodeId(NESTED, "subtask:service/0")).toMatchObject({ issues: [], children: ["/apidog"] });
   expect(subtaskByNodeId(NESTED, "subtask:service/0/5")).toBeNull();
   expect(subtaskByNodeId(NESTED, "subtask:nope/0")).toBeNull();
 });
@@ -209,4 +210,14 @@ test("a mentor of a parent without do gets a mentor link and keeps the parent in
   const g = (filter: Partial<Filter> = {}) => buildGraph(m, PEOPLE, { ...DEFAULT_FILTER, ...filter });
   expect(g().links).toContainEqual({ source: "person:YarikMix", target: "track:prof", kind: "mentor" });
   expect(g({ people: ["YarikMix"] }).nodes.map((n) => n.id)).toEqual(["person:YarikMix", "track:prof"]);
+});
+
+test("subtask issues reach subtaskByNodeId and nested labels", () => {
+  const withIssues = parseModule("modules/2/index.md", "2", { title: "Тест" }, [
+    t("service", { title: "Сервис", area: "team", do: { YarikMix: "team" }, subtasks: [{ title: "Скиллы", issues: ["x#1"], subtasks: [{ title: "/apidog", issues: ["x#2"] }] }] }),
+  ], CTX);
+  expect(subtaskByNodeId(withIssues, "subtask:service/0")).toMatchObject({ issues: ["x#1"] });
+  expect(subtaskByNodeId(withIssues, "subtask:service/0/0")).toMatchObject({ issues: ["x#2"] });
+  const g = buildGraph(withIssues, PEOPLE, DEFAULT_FILTER);
+  expect(g.nodes.find((n) => n.id === "subtask:service/0/0")).toMatchObject({ label: "/apidog" });
 });

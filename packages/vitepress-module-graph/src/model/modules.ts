@@ -16,8 +16,10 @@ function checkNeeds(file: string, area: string, doers: readonly Doer[], ctx: Con
 	}
 }
 export type Related = { track: string; why: string };
-/** Подзадача трека; вложенные — только строки (спека 2026-10-09-subtracks §4). */
-export type Subtask = { title: string; subtasks: string[] };
+/** Вложенная подзадача: название и номера задач доски (спека 2026-10-11-subtask-issues §3). */
+export type SubtaskLeaf = { title: string; issues: string[] };
+/** Подзадача трека: название, номера задач доски и один уровень вложенных (спеки 2026-10-09-subtracks §4, 2026-10-11-subtask-issues §3). */
+export type Subtask = { title: string; issues: string[]; subtasks: SubtaskLeaf[] };
 /** Подстраница трека: `tracks/<track>/<id>.md` (спека 2026-10-08-bff-into-module §5). */
 export type TrackPage = { id: string; title: string; url: string };
 export type Track = {
@@ -72,9 +74,28 @@ function strings(file: string, field: string, value: unknown): string[] {
 	});
 }
 
-const SUBTASK_KEYS = new Set(["title", "subtasks"]);
+const SUBTASK_KEYS = new Set(["title", "issues", "subtasks"]);
+const LEAF_KEYS = new Set(["title", "issues"]);
+const ISSUE_REF = /^(?:[A-Za-z0-9-]+\/)?[A-Za-z0-9._-]+#[1-9][0-9]*$/;
 
-/** Подзадачи: строка или `{ title, subtasks }`; вложенные — строки; соседние названия не повторяются. */
+/** `issues` подзадачи: непустой список номеров `репо#N` или `владелец/репо#N` без повторов; нет поля — `[]`. */
+function issues(file: string, field: string, value: unknown): string[] {
+	if (value === undefined) return [];
+	const bad = "нужен номер задачи вида репо#N или владелец/репо#N";
+	if (!Array.isArray(value) || value.length === 0) throw new ModuleDataError(file, field, bad);
+	const seen = new Set<string>();
+	return value.map((item, index) => {
+		if (typeof item !== "string" || !ISSUE_REF.test(item)) throw new ModuleDataError(file, `${field}[${index}]`, bad);
+		if (seen.has(item)) throw new ModuleDataError(file, field, `задача ${item} повторяется`);
+		seen.add(item);
+		return item;
+	});
+}
+
+/**
+ * Подзадачи: строка или `{ title, issues, subtasks }`; вложенные — строка или `{ title, issues }`;
+ * соседние названия не повторяются (спека 2026-10-11-subtask-issues §3).
+ */
 function subtasks(file: string, value: unknown): Subtask[] {
 	const unique = (titles: string[]) => {
 		const seen = new Set<string>();
@@ -85,17 +106,22 @@ function subtasks(file: string, value: unknown): Subtask[] {
 	};
 	const result = list(file, "subtasks", value).map((item, index): Subtask => {
 		const field = `subtasks[${index}]`;
-		if (typeof item === "string") return { title: item, subtasks: [] };
+		if (typeof item === "string") return { title: item, issues: [], subtasks: [] };
 		if (!isRecord(item) || Object.keys(item).some((key) => !SUBTASK_KEYS.has(key))) {
-			throw new ModuleDataError(file, field, "нужна строка или { title, subtasks }");
+			throw new ModuleDataError(file, field, "нужна строка или { title, issues, subtasks }");
 		}
 		if (!nonEmpty(item.title)) throw new ModuleDataError(file, `${field}.title`, "нужна непустая строка");
-		const nested = list(file, `${field}.subtasks`, item.subtasks).map((sub, j) => {
-			if (typeof sub !== "string") throw new ModuleDataError(file, `${field}.subtasks[${j}]`, "нужна строка: вложенность — один уровень");
-			return sub;
+		const nested = list(file, `${field}.subtasks`, item.subtasks).map((sub, j): SubtaskLeaf => {
+			const leafField = `${field}.subtasks[${j}]`;
+			if (typeof sub === "string") return { title: sub, issues: [] };
+			if (!isRecord(sub) || Object.keys(sub).some((key) => !LEAF_KEYS.has(key))) {
+				throw new ModuleDataError(file, leafField, "нужна строка или { title, issues }");
+			}
+			if (!nonEmpty(sub.title)) throw new ModuleDataError(file, `${leafField}.title`, "нужна непустая строка");
+			return { title: sub.title, issues: issues(file, `${leafField}.issues`, sub.issues) };
 		});
-		unique(nested);
-		return { title: item.title, subtasks: nested };
+		unique(nested.map((n) => n.title));
+		return { title: item.title, issues: issues(file, `${field}.issues`, item.issues), subtasks: nested };
 	});
 	unique(result.map((st) => st.title));
 	return result;
@@ -332,7 +358,7 @@ export function buildGraph(
 		t.subtasks.forEach((s, i) => {
 			nodes.push({ id: subtaskId(t.id, i), kind: "subtask", label: s.title, title: s.title, area: t.area, trackId: t.id });
 			links.push({ source: trackId(t.id), target: subtaskId(t.id, i), kind: "part" });
-			s.subtasks.forEach((title, j) => {
+			s.subtasks.forEach(({ title }, j) => {
 				const id = `${subtaskId(t.id, i)}/${j}`;
 				nodes.push({ id, kind: "subtask", label: title, title, area: t.area, trackId: t.id });
 				links.push({ source: subtaskId(t.id, i), target: id, kind: "part" });
@@ -375,15 +401,15 @@ export function neighbours(graph: { links: GraphLink[] }, id: string): Set<strin
 export function subtaskByNodeId(
 	module: Module,
 	id: string,
-): { track: Track; title: string; children: string[]; parent: { index: number; title: string } | null } | null {
+): { track: Track; title: string; issues: string[]; children: string[]; parent: { index: number; title: string } | null } | null {
 	const match = /^subtask:([^/]+)\/(\d+)(?:\/(\d+))?$/.exec(id);
 	if (!match) return null;
 	const track = module.tracks.find((t) => t.id === match[1]);
 	const top = track?.subtasks[Number(match[2])];
 	if (!track || !top) return null;
-	if (match[3] === undefined) return { track, title: top.title, children: top.subtasks, parent: null };
-	const title = top.subtasks[Number(match[3])];
-	return title === undefined ? null : { track, title, children: [], parent: { index: Number(match[2]), title: top.title } };
+	if (match[3] === undefined) return { track, title: top.title, issues: top.issues, children: top.subtasks.map((n) => n.title), parent: null };
+	const leaf = top.subtasks[Number(match[3])];
+	return leaf === undefined ? null : { track, title: leaf.title, issues: leaf.issues, children: [], parent: { index: Number(match[2]), title: top.title } };
 }
 
 export function searchMatches(nodes: readonly GraphNode[], query: string): Set<string> {

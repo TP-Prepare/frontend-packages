@@ -9,7 +9,6 @@ import { useModuleGraph } from '../data';
 
 const props = defineProps<{ nodes: GraphNode[]; links: GraphLink[]; selected: string | null; matches: Set<string> }>();
 const emit = defineEmits<{ select: [id: string | null]; failed: [] }>();
-defineExpose({ fit });
 
 type SimNode = GraphNode & { x?: number; y?: number; lines: string[] };
 type SimLink = Omit<GraphLink, 'source' | 'target'> & { source: string | SimNode; target: string | SimNode };
