@@ -34,7 +34,6 @@ const filter = ref<Filter>(defaultFilter(data.config));
 const query = ref('');
 const selected = ref<string | null>(null);
 const failed = ref(false);
-const canvas = ref<InstanceType<typeof GraphCanvas>>();
 
 // Задачи модуля со снимка доски; null — снимка нет.
 const tasks = computed<ModuleTasks | null>(() => (module.value ? moduleTasks(data.board, module.value) : null));
@@ -99,7 +98,6 @@ watch(graph, (value) => {
           <ClientOnly>
             <GraphCanvas
               v-if="!failed"
-              ref="canvas"
               :nodes="graph.nodes"
               :links="graph.links"
               :selected="selected"
@@ -119,12 +117,12 @@ watch(graph, (value) => {
             :module="module"
             :people="data.people"
             :tasks="tasks"
+            :by-ref="tasks ? (data.board?.byRef ?? null) : null"
             @select="selected = $event"
             @close="selected = null"
           />
           <div class="hud">
             <p>Наведите на узел, чтобы подсветить соседей. Клик открывает карточку, колесо мыши меняет масштаб.</p>
-            <button type="button" @click="canvas?.fit()">Вписать</button>
           </div>
         </div>
       </template>
@@ -187,16 +185,14 @@ watch(graph, (value) => {
 .notice button {
   pointer-events: auto;
 }
-.reset,
-.hud button {
+.reset {
   padding: 4px 12px;
   border: 1px solid var(--vp-c-divider);
   border-radius: 8px;
   background: var(--vp-c-bg);
   font-size: 13px;
 }
-.reset:hover,
-.hud button:hover {
+.reset:hover {
   border-color: var(--vp-c-brand-1);
 }
 .hud {
@@ -216,10 +212,6 @@ watch(graph, (value) => {
   font-size: 12px;
   line-height: 1.4;
   color: var(--vp-c-text-2);
-}
-.hud button {
-  flex: none;
-  pointer-events: auto;
 }
 .period {
   color: var(--vp-c-text-2);
