@@ -108,7 +108,11 @@ export function readBoard(path: string, modules: readonly Module[]): BoardData |
 	if (!existsSync(path)) return null;
 	try {
 		const snapshot = parseSnapshot(JSON.parse(readFileSync(path, "utf8")));
-		return { takenAt: snapshot.takenAt, byModule: assignTasks(modules, snapshot) };
+		return {
+			takenAt: snapshot.takenAt,
+			byModule: assignTasks(modules, snapshot),
+			byRef: Object.fromEntries(snapshot.tasks.map((t) => [t.ref, t])),
+		};
 	} catch (error) {
 		if (!(error instanceof SnapshotError) && !(error instanceof SyntaxError)) throw error;
 		const message = (error as Error).message;
