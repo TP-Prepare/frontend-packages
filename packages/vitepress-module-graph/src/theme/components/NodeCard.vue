@@ -135,8 +135,8 @@ const view = computed(() => {
           <li>
             <button type="button" class="go" @click="emit('select', `subtask:${view.t.id}/${i}`)">{{ s.title }}</button>
           </li>
-          <li v-for="(title, j) in s.subtasks" :key="`${i}/${j}`" class="nested">
-            <button type="button" class="go" @click="emit('select', `subtask:${view.t.id}/${i}/${j}`)">{{ title }}</button>
+          <li v-for="(nested, j) in s.subtasks" :key="`${i}/${j}`" class="nested">
+            <button type="button" class="go" @click="emit('select', `subtask:${view.t.id}/${i}/${j}`)">{{ nested.title }}</button>
           </li>
         </template>
       </ul>

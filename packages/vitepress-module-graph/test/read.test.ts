@@ -161,7 +161,7 @@ test("real site/modules is valid", () => {
   expect(track("service-harness")?.label).toBe("Harness сервиса");
   expect(track("front-harness")?.partOf).toBe("service-harness");
   expect(track("front-harness")?.related).toEqual([]);
-  expect(track("service-harness")?.subtasks).toEqual([{ title: "Скиллы", subtasks: ["/apidog"] }]);
+  expect(track("service-harness")?.subtasks).toEqual([{ title: "Скиллы", issues: [], subtasks: [{ title: "/apidog", issues: [] }] }]);
   const redis = track("redis-sessions");
   expect([redis?.area, redis?.do, redis?.mentors, redis?.related.map((r) => r.track), redis?.subtasks.length]).toEqual([
     "back",

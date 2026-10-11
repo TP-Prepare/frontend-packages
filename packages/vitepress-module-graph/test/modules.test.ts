@@ -41,7 +41,7 @@ describe("parseTrack", () => {
 
   test("label, mentors, subtasks, related and body are read", () => {
     const t = track({ ...valid(), label: "Б", mentors: ["YarikMix"], subtasks: ["tRPC"], related: [{ track: "x", why: "y" }] }, "bff", "## Цель");
-    expect([t.label, t.mentors, t.subtasks, t.related, t.hasBody]).toEqual(["Б", ["YarikMix"], [{ title: "tRPC", subtasks: [] }], [{ track: "x", why: "y" }], true]);
+    expect([t.label, t.mentors, t.subtasks, t.related, t.hasBody]).toEqual(["Б", ["YarikMix"], [{ title: "tRPC", issues: [], subtasks: [] }], [{ track: "x", why: "y" }], true]);
   });
 
   test("title is required", () => {
@@ -94,7 +94,7 @@ describe("parseTrack", () => {
     fails({ ...valid(), mentors: "YarikMix" }, "mentors — нужен список");
     fails({ ...valid(), subtasks: "tRPC" }, "subtasks — нужен список");
     fails({ ...valid(), related: { track: "x" } }, "related — нужен список");
-    fails({ ...valid(), subtasks: [404] }, "subtasks[0] — нужна строка или { title, subtasks }");
+    fails({ ...valid(), subtasks: [404] }, "subtasks[0] — нужна строка или { title, issues, subtasks }");
     fails({ ...valid(), mentors: ["YarikMix", 1] }, "mentors[1] — нужна строка");
   });
 
@@ -110,10 +110,32 @@ describe("parseTrack", () => {
   test("subtasks: string and object read the same", () => {
     const t = track({ ...valid(), subtasks: ["tRPC", { title: "Скиллы", subtasks: ["/apidog"] }, { title: "Orval" }] });
     expect(t.subtasks).toEqual([
-      { title: "tRPC", subtasks: [] },
-      { title: "Скиллы", subtasks: ["/apidog"] },
-      { title: "Orval", subtasks: [] },
+      { title: "tRPC", issues: [], subtasks: [] },
+      { title: "Скиллы", issues: [], subtasks: [{ title: "/apidog", issues: [] }] },
+      { title: "Orval", issues: [], subtasks: [] },
     ]);
+  });
+
+  test("subtasks: issues on top and nested", () => {
+    const t = track({ ...valid(), subtasks: ["a", { title: "b", issues: ["figma#5", "TP-Prepare/x#2"], subtasks: ["c", { title: "d", issues: ["frontend#40"] }] }] });
+    expect(t.subtasks).toEqual([
+      { title: "a", issues: [], subtasks: [] },
+      { title: "b", issues: ["figma#5", "TP-Prepare/x#2"], subtasks: [{ title: "c", issues: [] }, { title: "d", issues: ["frontend#40"] }] },
+    ]);
+  });
+
+  test("subtasks: issues are checked", () => {
+    const bad = "нужен номер задачи вида репо#N или владелец/репо#N";
+    fails({ ...valid(), subtasks: [{ title: "a", issues: "figma#5" }] }, `subtasks[0].issues — ${bad}`);
+    fails({ ...valid(), subtasks: [{ title: "a", issues: [] }] }, `subtasks[0].issues — ${bad}`);
+    fails({ ...valid(), subtasks: [{ title: "a", issues: ["figma#5", "figma 6"] }] }, `subtasks[0].issues[1] — ${bad}`);
+    fails({ ...valid(), subtasks: [{ title: "a", issues: ["figma#0"] }] }, `subtasks[0].issues[0] — ${bad}`);
+    fails({ ...valid(), subtasks: [{ title: "a", issues: ["figma#5", "figma#5"] }] }, "subtasks[0].issues — задача figma#5 повторяется");
+    fails({ ...valid(), subtasks: [{ title: "a", subtasks: [{ title: "b", issues: [5] }] }] }, `subtasks[0].subtasks[0].issues[0] — ${bad}`);
+    fails({ ...valid(), subtasks: [{ title: "a", subtasks: [{ title: "b", subtasks: ["c"] }] }] }, "subtasks[0].subtasks[0] — нужна строка или { title, issues }");
+    fails({ ...valid(), subtasks: [{ title: "a", subtasks: [{ title: "" }] }] }, "subtasks[0].subtasks[0].title — нужна непустая строка");
+    fails({ ...valid(), subtasks: [{ title: "a", subtasks: ["b", { title: "b" }] }] }, "subtasks — подзадача «b» повторяется");
+    expect(track({ ...valid(), subtasks: [{ title: "a", issues: ["figma#5"] }, { title: "b", issues: ["figma#5"] }] }).subtasks).toHaveLength(2);
   });
 
   test("part_of is read", () => {
@@ -123,10 +145,10 @@ describe("parseTrack", () => {
 
   test("part_of and subtasks are checked", () => {
     fails({ ...valid(), part_of: "" }, "part_of — нужна непустая строка");
-    fails({ ...valid(), subtasks: [404] }, "subtasks[0] — нужна строка или { title, subtasks }");
-    fails({ ...valid(), subtasks: [{ title: "a", note: "x" }] }, "subtasks[0] — нужна строка или { title, subtasks }");
+    fails({ ...valid(), subtasks: [404] }, "subtasks[0] — нужна строка или { title, issues, subtasks }");
+    fails({ ...valid(), subtasks: [{ title: "a", note: "x" }] }, "subtasks[0] — нужна строка или { title, issues, subtasks }");
     fails({ ...valid(), subtasks: [{ title: "" }] }, "subtasks[0].title — нужна непустая строка");
-    fails({ ...valid(), subtasks: [{ title: "a", subtasks: [{ title: "b" }] }] }, "subtasks[0].subtasks[0] — нужна строка: вложенность — один уровень");
+    fails({ ...valid(), subtasks: [{ title: "a", subtasks: [404] }] }, "subtasks[0].subtasks[0] — нужна строка или { title, issues }");
     fails({ ...valid(), subtasks: ["a", { title: "a" }] }, "subtasks — подзадача «a» повторяется");
     fails({ ...valid(), subtasks: [{ title: "a", subtasks: ["b", "b"] }] }, "subtasks — подзадача «b» повторяется");
     expect(track({ ...valid(), subtasks: ["a", { title: "b", subtasks: ["a"] }] }).subtasks).toHaveLength(2);

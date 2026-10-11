@@ -90,7 +90,7 @@ const urlOf = (id: string) => withBase(trackOf(id)?.url ?? found.value?.module.u
         <li v-for="(subtask, i) in found.track.subtasks" :key="i">
           {{ subtask.title }}
           <ul v-if="subtask.subtasks.length">
-            <li v-for="(title, j) in subtask.subtasks" :key="j">{{ title }}</li>
+            <li v-for="(nested, j) in subtask.subtasks" :key="j">{{ nested.title }}</li>
           </ul>
         </li>
       </ul>
