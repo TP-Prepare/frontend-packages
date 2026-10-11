@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.3.0](https://github.com/TP-Prepare/frontend-packages/compare/vitepress-module-graph-v0.2.0...vitepress-module-graph-v0.3.0) (2026-10-11)
+
+
+### Features
+
+* **vitepress-module-graph:** все задачи снимка по номеру и сопоставление с подзадачей ([12ea683](https://github.com/TP-Prepare/frontend-packages/commit/12ea683300f574fde836e337806ce6628d9afe14))
+* **vitepress-module-graph:** задачи в карточке подзадачи, без кнопки «Вписать» ([9b33336](https://github.com/TP-Prepare/frontend-packages/commit/9b333369d445cb96ee1792be3996b0b6e63d66e3))
+* **vitepress-module-graph:** задачи у подзадач на графе, без кнопки «Вписать» ([17920d7](https://github.com/TP-Prepare/frontend-packages/commit/17920d7c6bf1ba430f3c88aeb0900323a01f0930))
+* **vitepress-module-graph:** у подзадачи поле issues — номера задач доски ([d3730ed](https://github.com/TP-Prepare/frontend-packages/commit/d3730edf570707af38fdca9ddaf64f85fb6ab509))
+
+
+### Bug Fixes
+
+* **vitepress-module-graph:** номер задачи с префиксом владельца доски и в другом регистре находится на доске ([cfcd6c0](https://github.com/TP-Prepare/frontend-packages/commit/cfcd6c042633efcc554a02cfdc872a85c91009e3))
+
 ## [0.2.0](https://github.com/TP-Prepare/frontend-packages/compare/vitepress-module-graph-v0.1.2...vitepress-module-graph-v0.2.0) (2026-10-10)
 
 
