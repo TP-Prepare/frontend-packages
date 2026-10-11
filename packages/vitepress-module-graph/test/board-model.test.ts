@@ -296,6 +296,16 @@ describe("subtaskIssues", () => {
     expect(subtaskIssues(["figma#9"], {}, null)).toEqual([{ ref: "figma#9", task: null, url: null }]);
   });
 
+  test("owner prefix of the board and case differences still find the task", () => {
+    const foreign: BoardTask = { ...found, ref: "TP-Prepare/x#2", url: "https://github.com/TP-Prepare/x/issues/2" };
+    const refs = ["Cringe-Driven-Development-Team/figma#5", "Figma#5", "tp-prepare/X#2"] as const;
+    expect(subtaskIssues(refs, { "figma#5": found, "TP-Prepare/x#2": foreign }, "Cringe-Driven-Development-Team")).toEqual([
+      { ref: refs[0], task: found, url: found.url },
+      { ref: refs[1], task: found, url: found.url },
+      { ref: refs[2], task: foreign, url: foreign.url },
+    ]);
+  });
+
   test("subtask progress skips not_planned", () => {
     const byRef: Record<string, BoardTask> = {
       "figma#5": { ...found, state: "closed" },

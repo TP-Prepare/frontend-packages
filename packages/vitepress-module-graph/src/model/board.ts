@@ -172,8 +172,12 @@ export function subtaskIssues(
 	byRef: Readonly<Record<string, BoardTask>>,
 	owner: string | null,
 ): SubtaskIssue[] {
+	const lower = new Map(Object.entries(byRef).map(([k, t]) => [k.toLowerCase(), t]));
+	const ownerLc = owner?.toLowerCase();
 	return issues.map((ref) => {
-		const task = byRef[ref] ?? null;
+		// снимок пишет репозитории владельца доски без префикса; имена на GitHub регистронезависимы
+		const key = ownerLc && ref.toLowerCase().startsWith(`${ownerLc}/`) ? ref.slice(ownerLc.length + 1) : ref;
+		const task = lower.get(key.toLowerCase()) ?? null;
 		if (task) return { ref, task, url: task.url };
 		const m = ISSUE_REF.exec(ref);
 		const issueOwner = m?.[1] ?? owner;
