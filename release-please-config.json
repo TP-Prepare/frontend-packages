@@ -9,6 +9,14 @@
     }
   ],
   "packages": {
+    "packages/example-core": {
+      "component": "example-core",
+      "initial-version": "1.0.0"
+    },
+    "packages/example-addon": {
+      "component": "example-addon",
+      "initial-version": "1.0.0"
+    },
     "packages/vitepress-module-graph": {
       "component": "vitepress-module-graph"
     }
