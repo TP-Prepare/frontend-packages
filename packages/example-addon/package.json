@@ -1,6 +1,6 @@
 {
   "name": "@tp-prepare/example-addon",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Учебный пакет, использующий example-core как обычную npm-зависимость",
   "license": "MIT",
   "repository": {
@@ -33,6 +33,6 @@
     "prepublishOnly": "tsdown"
   },
   "dependencies": {
-    "@tp-prepare/example-core": "^1.1.0"
+    "@tp-prepare/example-core": "^1.1.1"
   }
 }

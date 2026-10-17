@@ -1,6 +1,6 @@
 {
   "name": "@tp-prepare/example-core",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Учебный базовый пакет для примера зависимых релизов release-please",
   "license": "MIT",
   "repository": {
