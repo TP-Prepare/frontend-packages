@@ -24,7 +24,7 @@ jobs:
           manifest-file: .release-please-manifest.json
 
   publish:
-    name: Publish ${{ matrix.path }}
+    name: Publish released packages
     needs: release-please
     if: needs.release-please.outputs.releases_created == 'true'
     runs-on: ubuntu-latest
@@ -32,10 +32,6 @@ jobs:
       contents: read
       # OIDC-токен для npm trusted publishing, секрет NPM_TOKEN не нужен
       id-token: write
-    strategy:
-      fail-fast: false
-      matrix:
-        path: ${{ fromJSON(needs.release-please.outputs.paths_released) }}
     steps:
       - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
@@ -50,5 +46,7 @@ jobs:
       # trusted publishing требует npm 11.5.1+
       - run: npm --version
       # bun publish не умеет trusted publishing, поэтому публикует npm
-      - run: npm publish
-        working-directory: ${{ matrix.path }}
+      # Публикуем только выпущенные пакеты, зависимости — раньше потребителей.
+      - run: bun scripts/publish.ts
+        env:
+          RELEASED_PATHS: ${{ needs.release-please.outputs.paths_released }}
