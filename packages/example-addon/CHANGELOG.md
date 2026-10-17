@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.1](https://github.com/TP-Prepare/frontend-packages/compare/example-addon-v1.1.0...example-addon-v1.1.1) (2026-10-17)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @tp-prepare/example-core bumped from ^1.1.0 to ^1.1.1
+
 ## [1.1.0](https://github.com/TP-Prepare/frontend-packages/compare/example-addon-v1.0.0...example-addon-v1.1.0) (2026-10-17)
 
 
