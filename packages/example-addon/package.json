@@ -1,6 +1,6 @@
 {
   "name": "@tp-prepare/example-addon",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Учебный пакет, использующий example-core как обычную npm-зависимость",
   "license": "MIT",
   "repository": {
@@ -10,13 +10,22 @@
   },
   "homepage": "https://github.com/TP-Prepare/frontend-packages/tree/main/packages/example-addon#readme",
   "type": "module",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "sideEffects": false,
   "exports": {
-    ".": { "types": "./dist/index.d.mts", "import": "./dist/index.mjs" }
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    }
   },
-  "files": ["dist"],
-  "publishConfig": { "access": "public" },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsdown",
     "typecheck": "tsc --noEmit",
@@ -24,6 +33,6 @@
     "prepublishOnly": "tsdown"
   },
   "dependencies": {
-    "@tp-prepare/example-core": "^1.0.0"
+    "@tp-prepare/example-core": "^1.1.0"
   }
 }
