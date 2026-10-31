@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://github.com/TP-Prepare/frontend-packages/compare/vitepress-module-graph-v0.3.0...vitepress-module-graph-v1.0.0) (2026-10-31)
+
+
+### ⚠ BREAKING CHANGES
+
+* **module-graph:** перейти на VitePress 2.0.0-alpha.21
+
+### Features
+
+* **module-graph:** перейти на VitePress 2.0.0-alpha.21 ([4da9708](https://github.com/TP-Prepare/frontend-packages/commit/4da9708b31f8e371540ef32ae5d55a9206263bfe))
+
 ## [0.3.0](https://github.com/TP-Prepare/frontend-packages/compare/vitepress-module-graph-v0.2.0...vitepress-module-graph-v0.3.0) (2026-10-11)
 
 
