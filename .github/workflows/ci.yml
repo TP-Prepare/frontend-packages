@@ -25,3 +25,6 @@ jobs:
       - run: bun run test
       - run: bun run test:packages
       - run: bun run --filter '*' test:site
+      - run: bun run --filter @tp-prepare/vitepress-module-graph test:site
+        env:
+          SITE_BASE: /branches/vitepress-2/

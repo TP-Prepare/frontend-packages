@@ -6,6 +6,7 @@ import { type ChildProcess, spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 const pkg = fileURLToPath(new URL("../../", import.meta.url));
+const siteBase = process.env.SITE_BASE ?? "/";
 const KEY_RE = /Symbol(\.for)?\(\s*["']@tp-prepare\/vitepress-module-graph["']\s*\)/g;
 const IMPORT_RE = /(?:import|export)\s[^;]*?from\s*["']([^"']+)["']|import\s*["']([^"']+)["']/g;
 const OURS = /@tp-prepare[/_]vitepress-module-graph/;
@@ -38,7 +39,7 @@ async function get(base: string, path: string): Promise<string> {
 // Модули пакета, достижимые из темы сайта: обход импортов, пока Vite отдаёт их без ошибок.
 async function crawl(base: string): Promise<Map<string, string>> {
 	const seen = new Map<string, string>();
-	const queue = ["/.vitepress/theme/index.ts"];
+	const queue = [`${siteBase}.vitepress/theme/index.ts`];
 	while (queue.length > 0) {
 		const path = queue.shift() as string;
 		if (seen.has(path)) continue;
@@ -55,7 +56,7 @@ async function crawl(base: string): Promise<Map<string, string>> {
 const { server, base } = await start();
 let failed = false;
 try {
-	await get(base, "/modules/2/");
+	await get(base, `${siteBase}modules/2/`);
 	// Первый обход запускает оптимизацию зависимостей; после неё у собранных файлов другой ?v= — повторяем.
 	let modules: Map<string, string> | null = null;
 	for (let attempt = 1; !modules; attempt++) {
