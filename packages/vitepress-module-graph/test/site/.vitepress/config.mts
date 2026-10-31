@@ -4,6 +4,7 @@ import { defineConfig } from "vitepress";
 import { moduleSidebar, readModules } from "@tp-prepare/vitepress-module-graph/node";
 
 export default defineConfig({
+	base: process.env.SITE_BASE ?? "/",
 	lang: "ru-RU",
 	title: "module-graph",
 	cleanUrls: true,

@@ -16,7 +16,7 @@
 Так это выглядит на сайте команды Cringe Driven Development:
 [модуль №2](https://cringe-driven-development-team.github.io/docs/modules/2/).
 
-Нужны VitePress 1.6+ и Vue 3.5+, CLI работает под Node 22+ и bun.
+Проверено на VitePress 2.0.0-alpha.21 (точная peer dependency); нужен Vue 3.5+, CLI работает под Node 22+ и bun.
 
 ```sh
 npm install @tp-prepare/vitepress-module-graph
@@ -231,8 +231,12 @@ GH_TOKEN="$(gh auth token)" npx module-graph board snapshot site/modules/board.j
 Из корня `frontend-packages`:
 
 ```sh
-bun install
-bun run build && bun run typecheck && bun run test && bun run --filter '*' test:site
+bun install --frozen-lockfile
+bun run build && bun run typecheck && bun run test && bun run test:packages
+bun run --filter '*' test:site
+SITE_BASE=/branches/vitepress-2/ bun run --filter @tp-prepare/vitepress-module-graph test:site
+# Упаковать и проверить текущий dist:
+bun scripts/check-module-graph-package.ts
 ```
 
 - `build` — `tsdown`: `src/**/*.ts` → `dist/*.mjs` и `.d.mts`; `.vue` копируются в `dist/theme/` без изменений,
@@ -240,7 +244,10 @@ bun run build && bun run typecheck && bun run test && bun run --filter '*' test:
 - `typecheck` — `tsc` (TypeScript 7) и `vue-tsc` для `.vue` (на TypeScript 6 из `@typescript/typescript6`: у
   TypeScript 7 нет JS API, на котором работает `vue-tsc`).
 - `test:site` — тестовый сайт `test/site` на копии фикстуры: пакет копируется в `test/site/node_modules`, как
-  после `npm install`, затем `tsc`, `vitepress build` и проверка страниц, затем дымовая проверка `vitepress dev`.
+  после `npm install`, затем `tsc`, `vitepress build` и проверка страниц, затем дымовая проверка `vitepress dev`. `SITE_BASE` задаёт base только тестового сайта.
+- `bun scripts/check-module-graph-package.ts /path/to/archive.tgz` проверяет указанный архив вместо упаковки текущего `dist`.
+- `test:packages` сохраняет проверку example-пакетов и проверяет настоящий архив module-graph вне workspace:
+  установку с VitePress `2.0.0-alpha.21`, содержимое, экспорты модели и node, CLI и сборку тестового сайта.
 
 ## Первая публикация
 
